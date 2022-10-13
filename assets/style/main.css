@@ -1,0 +1,193 @@
+/* page */
+:root,
+body,
+html {
+  padding: 0;
+  margin: 0;
+  background-color: var(--bg);
+  background-image: url("../image/bg.jpg");
+  color: #fff;
+  --size: 3.5vh;
+  --gap: 0.75vh;
+}
+
+/* layout */
+main {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  align-items: center;
+  -webkit-backdrop-filter: blur(2.5vh);
+  backdrop-filter: blur(2.5vh);
+}
+
+main > div {
+  display: flex;
+}
+main caption {
+  line-height: 3.5vh;
+  font-size: 3.5vh;
+  height: 5vh;
+  overflow: hidden;
+  transition: transform 0.5s;
+  animation: captionIn 0.5s 0.75s both;
+}
+
+@media (max-height: 300px) {
+  main caption {
+    transform: scale(0);
+    height: 0;
+    transition: transform 0.5s, height 0.5s;
+  }
+}
+.status {
+  overflow: hidden;
+}
+.status > div {
+  margin: 3vh 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: statusIn 0.5s 0.75s both;
+}
+.status > tr::before {
+  content: "";
+  display: block;
+  margin: var(--gap) 0;
+}
+
+.status .next::before {
+  content: "Next";
+}
+
+.status .hold::before {
+  content: "Hold";
+}
+
+/* field */
+.field,
+.connect,
+.status table {
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
+  margin: 0.25vh 0;
+}
+.main .field{
+  height: calc(var(--size) * 20 + var(--gap) * 21 + var(--size) * 0.25);
+  justify-content: flex-end;
+  margin: 0;
+}
+.connect {
+  position: absolute;
+  margin-top: 0;
+}
+.main .connect{
+  transform: translate(0, -100%);
+}
+
+.field td,
+.field .buffer.disp td,
+.connect td,
+.connect .buffer.disp td {
+  display: table-cell;
+  width: var(--size);
+  height: var(--size);
+  border: solid #0000 var(--gap);
+  border-top-width: calc(var(--gap) * 0.5);
+  border-bottom-width: calc(var(--gap) * 0.5);
+  margin: 0;
+  padding: 0;
+  animation:
+    tdIn 0.5s calc((var(--col) + var(--row) * 10) * 3ms) cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
+}
+
+.field td::before,
+.connect td::before {
+  display: block;
+  width: var(--size);
+  height: var(--size);
+  content: "";
+}
+
+.field td::before {
+  background-color: #fff2;
+  border-radius: 0.5vh;
+}
+
+main .buffer td {
+  display: none;
+  animation: none;
+}
+
+main table {
+  border-collapse: collapse;
+}
+
+main .buffer {
+  opacity: 0.5;
+}
+
+.cnt-hori {
+  margin-left: calc((var(--size) + var(--gap)) / 2);
+}
+
+.cnt-vert {
+  margin-top: calc(var(--size) * 0.5 + var(--gap));
+}
+.main .cnt-vert{
+  margin-top: calc(var(--size) * -0.5 - var(--gap) * 0.5);
+  height: calc(var(--size) * 20 + var(--gap) * 20);
+}
+
+/* tetriminos */
+table .i::before {
+  background-color: var(--I);
+}
+
+table .j::before {
+  background-color: var(--J);
+}
+
+table .l::before {
+  background-color: var(--L);
+}
+
+table .o::before {
+  background-color: var(--O);
+}
+
+table .s::before {
+  background-color: var(--S);
+}
+
+table .z::before {
+  background-color: var(--Z);
+}
+
+table .t::before {
+  background-color: var(--T);
+}
+
+/* keyframes */
+@keyframes tdIn {
+  0% {
+    transform: translate(0, -100%) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes captionIn {
+  0% {
+    transform: scale(0);
+    height: 0;
+  }
+}
+
+@keyframes statusIn {
+  0%{
+    transform: translate(-100%, 0);
+  }
+}

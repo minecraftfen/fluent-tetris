@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="./assets/image/favicon.ico"
+    />
+    <title>Fluent Tetris</title>
+    <link rel="stylesheet" href="./assets/style/main.css" />
+    <link rel="stylesheet" href="./assets/style/var.css" />
+  </head>
+  <body>
+    <main>
+      <div>
+        <table class="main">
+          <caption>
+            Player1
+          </caption>
+          <tbody class="field" id="p1f"></tbody>
+          <tbody class="connect cnt-hori" id="p1ch"></tbody>
+          <tbody class="connect cnt-vert" id="p1cv"></tbody>
+        </table>
+        <div class="status" id="p1s">
+          <div class="hold" id="p1h"></div>
+          <div class="next" id="p1n"></div>
+        </div>
+      </div>
+      <div>
+        <table class="main">
+          <caption>
+            Player2
+          </caption>
+          <tbody class="field" id="p2f"></tbody>
+          <tbody class="connect cnt-hori" id="p2ch"></tbody>
+          <tbody class="connect cnt-vert" id="p2cv"></tbody>
+        </table>
+        <div class="status" id="p2s">
+          <div class="hold" id="p2h"></div>
+          <div class="next" id="p2n"></div>
+        </div>
+      </div>
+    </main>
+    <script src="./assets/script/init.js"></script>
+    <script src="./assets/script/var.js"></script>
+  </body>
+</html>
