@@ -189,5 +189,6 @@ table .t::before {
 @keyframes statusIn {
   0%{
     transform: translate(-100%, 0);
+    opacity: 0;
   }
 }
