@@ -15,28 +15,28 @@
   </head>
   <body>
     <main>
-      <div>
+      <div id="p1">
         <table class="main">
           <caption>
             Player1
           </caption>
           <tbody class="field" id="p1f"></tbody>
-          <tbody class="connect cnt-hori" id="p1ch"></tbody>
-          <tbody class="connect cnt-vert" id="p1cv"></tbody>
+          <tbody class="connect cntHori" id="p1ch"></tbody>
+          <tbody class="connect cntVert" id="p1cv"></tbody>
         </table>
         <div class="status" id="p1s">
           <div class="hold" id="p1h"></div>
           <div class="next" id="p1n"></div>
         </div>
       </div>
-      <div>
+      <div id="p2">
         <table class="main">
           <caption>
             Player2
           </caption>
           <tbody class="field" id="p2f"></tbody>
-          <tbody class="connect cnt-hori" id="p2ch"></tbody>
-          <tbody class="connect cnt-vert" id="p2cv"></tbody>
+          <tbody class="connect cntHori" id="p2ch"></tbody>
+          <tbody class="connect cntVert" id="p2cv"></tbody>
         </table>
         <div class="status" id="p2s">
           <div class="hold" id="p2h"></div>
@@ -45,6 +45,12 @@
       </div>
     </main>
     <script src="./assets/script/ftMain.js"></script>
-    <script>ft();</script>
+    <script src="./assets/script/ftTool.js"></script>
+    <script src="./assets/script/ftMgr.js"></script>
+    <script>
+      ft();
+      document.getElementById('p1').main = new ft.main(1);
+      document.getElementById('p2').main = new ft.main(2);
+    </script>
   </body>
 </html>

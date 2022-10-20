@@ -23,9 +23,10 @@ main {
   backdrop-filter: blur(2.5vh);
 }
 
-main > div {
+main>div {
   display: flex;
 }
+
 main caption {
   line-height: 3.5vh;
   font-size: 3.5vh;
@@ -42,17 +43,20 @@ main caption {
     transition: transform 0.5s, height 0.5s;
   }
 }
+
 .status {
   overflow: hidden;
 }
-.status > div {
+
+.status>div {
   margin: 3vh 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   animation: statusIn 0.5s 0.75s both;
 }
-.status > tr::before {
+
+.status>tr::before {
   content: "";
   display: block;
   margin: var(--gap) 0;
@@ -75,16 +79,22 @@ main caption {
   overflow-y: hidden;
   margin: 0.25vh 0;
 }
-.main .field{
+
+.main .field {
   height: calc(var(--size) * 20 + var(--gap) * 21 + var(--size) * 0.25);
   justify-content: flex-end;
   margin: 0;
 }
+
 .connect {
   position: absolute;
+}
+
+.main .connect {
   margin-top: 0;
 }
-.main .connect{
+
+.main .connect {
   transform: translate(0, -100%);
 }
 
@@ -100,8 +110,13 @@ main caption {
   border-bottom-width: calc(var(--gap) * 0.5);
   margin: 0;
   padding: 0;
-  animation:
-    tdIn 0.5s calc((var(--col) + var(--row) * 10) * 3ms) cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
+}
+
+.field tr {
+  animation: tdIn 0.5s calc(var(--row) * 10ms) cubic-bezier(0, 0, 0.2, 1) both;
+}
+.connect tr {
+  animation: cntIn 0.5s 0.7s cubic-bezier(0, 0, 0.2, 1) both;
 }
 
 .field td::before,
@@ -130,14 +145,19 @@ main .buffer {
   opacity: 0.5;
 }
 
-.cnt-hori {
+.cntHori {
   margin-left: calc((var(--size) + var(--gap)) / 2);
 }
 
-.cnt-vert {
+.main > .cntHori > :nth-child(1) {
+  opacity: 0;
+}
+
+.cntVert {
   margin-top: calc(var(--size) * 0.5 + var(--gap));
 }
-.main .cnt-vert{
+
+.main .cntVert {
   margin-top: calc(var(--size) * -0.5 - var(--gap) * 0.5);
   height: calc(var(--size) * 20 + var(--gap) * 20);
 }
@@ -171,10 +191,44 @@ table .t::before {
   background-color: var(--T);
 }
 
+table .prei::before {
+  outline: 1px solid var(--I);
+}
+
+table .prej::before {
+  outline: 2px solid var(--J);
+}
+
+table .prel::before {
+  outline: 1px solid var(--L);
+}
+
+table .preo::before {
+  outline: 1px solid var(--O);
+}
+
+table .pres::before {
+  outline: 1px solid var(--S);
+}
+
+table .prez::before {
+  outline: 1px solid var(--Z);
+}
+
+table .pret::before {
+  outline: 1px solid var(--T);
+}
+
 /* keyframes */
 @keyframes tdIn {
   0% {
     transform: translate(0, -100%) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes cntIn {
+  0% {
     opacity: 0;
   }
 }
@@ -187,7 +241,7 @@ table .t::before {
 }
 
 @keyframes statusIn {
-  0%{
+  0% {
     transform: translate(-100%, 0);
     opacity: 0;
   }
