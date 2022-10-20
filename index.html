@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-cn">
+<html lang="zh-cn" class="html">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -29,7 +29,7 @@
           <div class="next" id="p1n"></div>
         </div>
       </div>
-      <div id="p2">
+      <div id="p2" style="display: none;">
         <table class="main">
           <caption>
             Player2
@@ -44,13 +44,21 @@
         </div>
       </div>
     </main>
+    <!-- Libraries -->
     <script src="./assets/script/ftMain.js"></script>
-    <script src="./assets/script/ftTool.js"></script>
     <script src="./assets/script/ftMgr.js"></script>
+    <script src="./assets/script/ftRender.js"></script>
+    <script src="./assets/script/ftVar.js"></script>
+    <!-- Instances -->
     <script>
-      ft();
+      ft.render.initobj();
       document.getElementById('p1').main = new ft.main(1);
-      document.getElementById('p2').main = new ft.main(2);
+      // document.getElementById('p2').main = new ft.main(2);
+      ft.copyright();
     </script>
+    <!-- Debug -->
+    <script src="./assets/script/ftTool.js"></script>
+    <script>window.ftTool.addkbdEvent()</script>
+    <!---->
   </body>
 </html>

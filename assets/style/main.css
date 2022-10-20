@@ -9,6 +9,8 @@ html {
   color: #fff;
   --size: 3.5vh;
   --gap: 0.75vh;
+  --explode: cubic-bezier(0, 0.8, 0, 1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* layout */
@@ -19,10 +21,45 @@ main {
   height: 100vh;
   position: fixed;
   align-items: center;
+  background-color: #0008;
   -webkit-backdrop-filter: blur(2.5vh);
   backdrop-filter: blur(2.5vh);
 }
-
+main > div::after{
+  opacity: 0;
+  content: "Failed";
+  background-color: #e74c3c40;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 15vh;
+  border-radius: 1vh;
+  -webkit-backdrop-filter: blur(0.5vh);
+  backdrop-filter: blur(0.5vh);
+}
+.fail {
+  transform: scale(.85) rotate(5deg);
+  transition: transform var(--explode) 3s;
+}
+.fail::after {
+  opacity: 1;
+  transition: opacity 3s;
+}
+/*
+@supports not(
+  (backdrop-filter: blur(0.5vh))
+  and
+  (-webkit-backdrop-filter: blur(0.5vh))
+) {
+}
+*/
+.fail .field td::before{
+  background-color: #e74c3c80;
+  transition: background-color 3s;
+}
 main>div {
   display: flex;
 }
@@ -115,7 +152,7 @@ main caption {
 .field tr {
   animation: tdIn 0.5s calc(var(--row) * 10ms) cubic-bezier(0, 0, 0.2, 1) both;
 }
-.connect tr {
+.main .connect tr {
   animation: cntIn 0.5s 0.7s cubic-bezier(0, 0, 0.2, 1) both;
 }
 
@@ -141,7 +178,7 @@ main table {
   border-collapse: collapse;
 }
 
-main .buffer {
+.main .field tr:nth-child(1) {
   opacity: 0.5;
 }
 
@@ -163,59 +200,75 @@ main .buffer {
 }
 
 /* tetriminos */
-table .i::before {
+html.html table .i::before,
+html.html table .j::before,
+html.html table .l::before,
+html.html table .o::before,
+html.html table .s::before,
+html.html table .z::before,
+html.html table .t::before,
+html.html table .prei::before,
+html.html table .prej::before,
+html.html table .prel::before,
+html.html table .preo::before,
+html.html table .pres::before,
+html.html table .prez::before,
+html.html table .pret::before {
+  transition: none;
+}
+html.html table .i::before {
   background-color: var(--I);
 }
 
-table .j::before {
+html.html table .j::before {
   background-color: var(--J);
 }
 
-table .l::before {
+html.html table .l::before {
   background-color: var(--L);
 }
 
-table .o::before {
+html.html table .o::before {
   background-color: var(--O);
 }
 
-table .s::before {
+html.html table .s::before {
   background-color: var(--S);
 }
 
-table .z::before {
+html.html table .z::before {
   background-color: var(--Z);
 }
 
-table .t::before {
+html.html table .t::before {
   background-color: var(--T);
 }
 
-table .prei::before {
+html.html table .prei::before {
   outline: 1px solid var(--I);
 }
 
-table .prej::before {
+html.html table .prej::before {
   outline: 2px solid var(--J);
 }
 
-table .prel::before {
+html.html table .prel::before {
   outline: 1px solid var(--L);
 }
 
-table .preo::before {
+html.html table .preo::before {
   outline: 1px solid var(--O);
 }
 
-table .pres::before {
+html.html table .pres::before {
   outline: 1px solid var(--S);
 }
 
-table .prez::before {
+html.html table .prez::before {
   outline: 1px solid var(--Z);
 }
 
-table .pret::before {
+html.html table .pret::before {
   outline: 1px solid var(--T);
 }
 
@@ -224,6 +277,12 @@ table .pret::before {
   0% {
     transform: translate(0, -100%) scale(0);
     opacity: 0;
+  }
+}
+
+@keyframes tdPC {
+  50% {
+    transform: scale(1.1);
   }
 }
 
