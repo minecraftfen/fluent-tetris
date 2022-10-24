@@ -27,9 +27,20 @@
   }
   window.ftTool.addkbdEvent = () => {
     document.onkeyup = (e) => {
-      let a = { ArrowUp: 'w', ArrowDown: 's', ArrowLeft: 'a', ArrowRight: 'd', '/':'e' }[e.key];
-      if(!a) a = e.key;
+      let a = { ArrowUp: 'w', ArrowDown: 's', ArrowLeft: 'a', ArrowRight: 'd', '/': 'e' }[e.key];
+      if (!a) a = e.key;
       p1.main.dropingBlock.move(a);
     };
+  }
+  window.ftTool.structure = () => {
+    document.querySelectorAll('.main .field').forEach((obj) => {
+      obj.addEventListener('click', (e) => {
+        if (e.target.tagName === 'TD')
+          if (e.target.classList.length === 0)
+            e.target.classList.add('trash');
+          else for (let i = 0; i < e.target.classList.length; i++)
+            e.target.classList.remove(e.target.classList[i]);
+      });
+    });
   }
 })()

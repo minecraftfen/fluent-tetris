@@ -47,6 +47,7 @@ window.ft = {};
       this.lockTick = null; // A UNIX Time shows when does lock clock start
       this.lockTimeout = 500;
       this.lockCheckID = null;
+      this.lastMove = false; // for t-spin, if it's true means last move is rotate.
       this.lockResetChance = 15; // restore when drop
       // this.rotateStored = null; // Accapted: null, "L", "R"
       this.actTick = null; // A UNIX Time shows when does lock clock start
@@ -59,11 +60,11 @@ window.ft = {};
           this.hardDrop();
           return null;
         },
-        z: () => {
+        c: () => {
           this.playerObj.main.holdAct();
           return null;
         },
-        c: () => [null, null, this.rotateIndex - 1],
+        z: () => [null, null, this.rotateIndex - 1],
         // '180': () => [null, null, this.rotateIndex + 2],
       }
       this.stickAct = {
@@ -79,7 +80,7 @@ window.ft = {};
       if (this.hitCheck()) this.playerObj.main.fail();
       this.renderSelf();
     }
-    move(dir) {
+    move(dir, render = true) {
       if (Object.keys(this.kbdAct).indexOf(dir) === -1) return;
       let out;
       let act = this.kbdAct[dir]();
@@ -92,7 +93,10 @@ window.ft = {};
           if (act[0] !== null) this.lockResetChance = 15;
           else this.lockResetChance--;
           [this.x, this.y] = out;
-          if (act[2] !== null) this.rotateIndex = window.ft.render.rotate(act[2]);
+          if (act[2] !== null) {
+            this.rotateIndex = window.ft.render.rotate(act[2]);
+            if (out[0] === this.x && out[1] === this.y) this.lastMove = true;
+          } else this.lastMove = false;
         }/* else {
           if(act[2] !== null) {
             if(this.rotateStored + act[2] - this.rotateIndex === 2) {
@@ -105,7 +109,7 @@ window.ft = {};
         if (act === null) return;
       }
       this.checkFloor();
-      this.renderSelf(true);
+      if(render) this.renderSelf(true);
       return out;
     }
     checkFloor() {
@@ -126,8 +130,9 @@ window.ft = {};
       if (this.lockTick + this.lockTimeout < new Date().getTime()) this.lock();
     }
     lock() {
-      this.playerObj.main.checkClear();
+      console.log(this.playerObj.main.checkClear(this.tSpinCheck()));
       this.playerObj.main.dropingBlock = new window.ft.block(this.playerObj.main.popNext(), this.player);
+      window.ftmgr.unregister(this.lockCheckID);
       this.playerObj.main.holdReleased = false;
       delete this;
     }
@@ -157,20 +162,41 @@ window.ft = {};
       }
       return canmove ? [finalX, finalY] : false;
     }
+    tSpinCheck() {
+      if (!this.lastMove) return false;
+      let checkList = [
+        [0, 0],
+        [2, 0],
+        [0, 2],
+        [2, 2],
+      ], cnt = 0;
+      for (let i = 0; i < checkList.length; i++) {
+        const [x, y] = checkList[i];
+        if (this.x + x < 0 || this.x + x > 20 || this.y + y < 0 || this.y + y > 9) continue;
+        if (ft.render.objects.locate(
+          this.player,
+          this.x + checkList[i][0],
+          this.y + checkList[i][1]
+        ).classList.length > 0) cnt++;
+      }
+      return cnt >= 3;
+    }
     hitCheck(newX = null, newY = null, newRotateIndex = null) {
       let CheckX, CheckY, CheckRotateIndex;
       [CheckX, CheckY, CheckRotateIndex] = this.checkVars(newX, newY, newRotateIndex);
       let table = window.ft.srs.blocks[this.block].field[CheckRotateIndex];
       let hit = false;
       for (let i = 0; i < table.length; i++) {
-        if (CheckX + i == -1) continue;
         for (let j = 0; j < table[i].length; j++) {
           if (table[i][j]) {
-            if (CheckX + i < 0 || CheckX + i > 20) {
-              hit = true;
-              break;
-            };
-            if (CheckY + j < 0 || CheckY + j > 9) {
+            if (CheckX + i < 0) {
+              if (CheckY + j < 0 || CheckY + j > 9) {
+                hit = true;
+                break;
+              };
+              continue;
+            }
+            if (CheckX + i > 20 || CheckY + j < 0 || CheckY + j > 9) {
               hit = true;
               break;
             };
@@ -190,18 +216,21 @@ window.ft = {};
       }
       return hit;
     }
-    renderSelf(type = true) {
+    renderSelf(type = true,connect = true) {
       window.ft.render.renderBlock(
         this.block,
         this.rotateIndex,
         this.player,
         this.x,
         this.y,
-        type
+        type,
+        '',
+        connect
       );
     }
     hardDrop() {
-      while (this.move('s')) { };
+      while (this.move('s',false)) { };
+      this.renderSelf(true);
       this.lock();
     }
   };
@@ -215,9 +244,12 @@ window.ft = {};
       this.next = window.ft.tools.shuffle();
       this.dropingBlock = new window.ft.block(this.popNext(), this.player);
       this.field = [];
-      this.dropInterval = 1000 // in ms
+      this.dropInterval = 500 // in ms
       this.hold = null;
       this.holdReleased = false;
+      this.combo = 0;
+      this.b2b = 0;
+      this.comboATK = [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 4, 5, 5, 5]
       // this.nextAutoSoftDrop = 0;
       let temp = [];
       for (var i = 0; i < 10; i++) temp.push([]);
@@ -253,14 +285,15 @@ window.ft = {};
     }
     fail() {
       window.ftmgr.unregister(this.dropID);
-      console.log('failed');
 
       // TODO: WTF is this? That can't be a proper solution
       this.dropingBlock.playerObj.classList.add('fail');
+
       delete this;
     };
-    checkClear() {
+    checkClear(tSpin) {
       let obj = window.ft.render.objects[window.ft.tools.getPlayerID(this.player)];
+      let clearCount = 0;
       for (let i = 0; i < obj.field.children.length; i++) {
         let clear = true;
         for (let j = 0; j < obj.field.children[i].children.length; j++)
@@ -269,6 +302,7 @@ window.ft = {};
             break;
           }
         if (clear) {
+          clearCount++;
           for (let j = 0; j < obj.field.children[i].children.length; j++) {
             const color = obj.field.children[i].children[j].classList[0];
             if (color) {
@@ -290,6 +324,30 @@ window.ft = {};
           tmp.removeChild(tmp.children[0]);
           obj.cntHori.insertBefore(tmp, obj.cntHori.children[0]);
         }
+      }
+      if(tSpin) console.log(`Tspin${['',' Single',' Double',' Triple'][clearCount]}!`)
+      if (clearCount) {
+        this.combo++;
+        if(!tSpin) console.log(['','Single!','Double!','Triple!','Tetris!'][clearCount]);
+        if(this.combo > 1) console.log(`${this.combo} Combo!`);
+        if(clearCount === 4 || tSpin) this.b2b++;
+        else this.b2b = 0;
+        return { tSpin: tSpin, clearCount: clearCount };
+      } else this.combo = 0;
+    }
+    addTrash(lines = 1) {
+      let tmp1 = window.ft.render.emptyTr.cloneNode(true), tmp2 = window.ft.render.emptyTr.cloneNode(true), emptyNum = parseInt(Math.random() * 10);
+      for (let i = 0; i < tmp1.children.length; i++)
+        if (i !== emptyNum) tmp1.children[i].classList.add('trash');
+      tmp2.removeChild(tmp2.children[0]);
+      let obj = window.ft.render.objects[window.ft.tools.getPlayerID(this.player)];
+      for (let i = 0; i < lines; i++) {
+        obj.field.removeChild(obj.field.children[0]);
+        obj.field.appendChild(tmp1);
+        obj.cntHori.removeChild(obj.cntHori.children[0]);
+        obj.cntHori.appendChild(tmp2);
+        obj.cntVert.removeChild(obj.cntVert.children[0]);
+        obj.cntVert.appendChild(window.ft.render.emptyTr.cloneNode(true));
       }
     }
   };

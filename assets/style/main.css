@@ -156,6 +156,10 @@ main caption {
   animation: cntIn 0.5s 0.7s cubic-bezier(0, 0, 0.2, 1) both;
 }
 
+.connect, .connect *, main > div::after {
+  pointer-events:none;
+}
+
 .field td::before,
 .connect td::before {
   display: block;
@@ -242,6 +246,10 @@ html.html table .z::before {
 
 html.html table .t::before {
   background-color: var(--T);
+}
+
+html.html table .trash::before {
+  background-color: var(--trash);
 }
 
 html.html table .prei::before {
