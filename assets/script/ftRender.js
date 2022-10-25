@@ -62,8 +62,12 @@
         window.ft.render.objects.p1.field.appendChild(trobj.cloneNode(true));
         window.ft.render.objects.p2.field.appendChild(trobj);
       }
-      // window.ft.render.objects.p1.next.innerHTML = window.ft.render.objects.p2.next.innerHTML = window.ft.render.previewHTML.repeat(6);
+      window.ft.render.objects.p1.next.innerHTML = window.ft.render.objects.p2.next.innerHTML = window.ft.render.previewHTML.repeat(6);
       window.ft.render.objects.p1.hold.innerHTML = window.ft.render.objects.p2.hold.innerHTML = window.ft.render.previewHTML;
+    },
+    levelUp: (player) => { },
+    clearType: (player,tspin,clearCount,combo) => {
+
     },
     objects: {
       locate: (player, x, y, area = 'field') => {

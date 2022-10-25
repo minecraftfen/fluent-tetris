@@ -20,15 +20,13 @@
   window.ftmgr.unregister = (id) => {
     return delete window.ftmgr.workload[id];
   };
-  window.ftmgr.checkNeeded = () => {
-    if (window.ftmgr.workload.length === 0) window.ftmgr.started = false;
-    return window.ftmgr.started;
-  };
   window.ftmgr.frameHandler = (timestamp) => {
-    if (!window.ftmgr.checkNeeded()) return;
+    if (!window.ftmgr.started) return;
     try{
+    let valid = false;
     for (let i = 0; i < window.ftmgr.workload.length; i++) // Check All Workloads
       if (window.ftmgr.workload[i] !== undefined) { // Check is it valid
+        valid = true;
         if (window.ftmgr.workload[i].timestamp < timestamp) { // Check should it triggered
           if (window.ftmgr.workload[i].async) // Check is it async
             (async () => {return window.ftmgr.workload[i].handler(timestamp, window.ftmgr.workload[i].handlerVars)})(); // Async call
@@ -41,6 +39,7 @@
           else delete window.ftmgr.workload[i]; // Delete
         }
       }
+    window.ftmgr.started = valid;
     } catch (e) {
       if(!(e instanceof TypeError && e.message.search(/^Cannot read properties of undefined \(reading/) === 0)) throw e;
     }finally{

@@ -52,38 +52,40 @@ window.ft = {};
       // this.rotateStored = null; // Accapted: null, "L", "R"
       this.actTick = null; // A UNIX Time shows when does lock clock start
       this.kbdAct = {
-        w: () => [null, null, this.rotateIndex + 1],
-        a: () => [null, this.y - 1, null],
-        s: () => [this.x + 1, null, null],
-        d: () => [null, this.y + 1, null],
-        ' ': () => {
+        up: () => [null, null, this.rotateIndex + 1],
+        left: () => [null, this.y - 1, null],
+        down: () => [this.x + 1, null, null],
+        right: () => [null, this.y + 1, null],
+        drop: () => {
           this.hardDrop();
           return null;
         },
-        c: () => {
+        hold: () => {
           this.playerObj.main.holdAct();
           return null;
         },
-        z: () => [null, null, this.rotateIndex - 1],
+        rotateLeft: () => [null, null, this.rotateIndex - 1],
         // '180': () => [null, null, this.rotateIndex + 2],
       }
+      /*
       this.stickAct = {
-        w: () => {
+        up: () => {
           this.hardDrop();
-          return false;
+          return null;
         },
-        a: () => [null, this.y - 1, null],
-        s: () => [this.x + 1, null, null],
-        d: () => [null, this.y + 1, null],
+        left: () => [null, this.y - 1, null],
+        down: () => [this.x + 1, null, null],
+        right: () => [null, this.y + 1, null],
         // '180': () => [null, null, this.rotateIndex + 2],
       }
+      */
       if (this.hitCheck()) this.playerObj.main.fail();
       this.renderSelf();
     }
-    move(dir, render = true) {
-      if (Object.keys(this.kbdAct).indexOf(dir) === -1) return;
+    move(input, render = true, actDict = 'kbdAct') {
+      if (Object.keys(this[actDict]).indexOf(input) === -1) return;
       let out;
-      let act = this.kbdAct[dir]();
+      let act = this[actDict][input]();
       if (act) {
         if (act[0] === null && this.lockResetChance <= 0) return false;
         this.renderSelf(false);
@@ -109,7 +111,7 @@ window.ft = {};
         if (act === null) return;
       }
       this.checkFloor();
-      if(render) this.renderSelf(true);
+      if (render) this.renderSelf(true);
       return out;
     }
     checkFloor() {
@@ -130,6 +132,7 @@ window.ft = {};
       if (this.lockTick + this.lockTimeout < new Date().getTime()) this.lock();
     }
     lock() {
+      this.playerObj.hold.classList.remove('disabled');
       console.log(this.playerObj.main.checkClear(this.tSpinCheck()));
       this.playerObj.main.dropingBlock = new window.ft.block(this.playerObj.main.popNext(), this.player);
       window.ftmgr.unregister(this.lockCheckID);
@@ -216,7 +219,7 @@ window.ft = {};
       }
       return hit;
     }
-    renderSelf(type = true,connect = true) {
+    renderSelf(type = true, connect = true) {
       window.ft.render.renderBlock(
         this.block,
         this.rotateIndex,
@@ -229,7 +232,7 @@ window.ft = {};
       );
     }
     hardDrop() {
-      while (this.move('s',false)) { };
+      while (this.move('down', false)) { };
       this.renderSelf(true);
       this.lock();
     }
@@ -249,15 +252,25 @@ window.ft = {};
       this.holdReleased = false;
       this.combo = 0;
       this.b2b = 0;
-      this.comboATK = [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 4, 5, 5, 5]
+      this.comboATK = [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 4, 5, 5, 5];
+      this.clearCount = 0;
+      this.level = 1;
       // this.nextAutoSoftDrop = 0;
       let temp = [];
       for (var i = 0; i < 10; i++) temp.push([]);
       for (var i = 0; i < 20; i++) this.field.push(temp);
-      this.dropID = window.ftmgr.register((t, v) => { v.dropingBlock.move('s'); }, 0, this.dropInterval, true, this);
+      this.dropID = window.ftmgr.register((t, v) => { v.dropingBlock.move('down'); }, 0, this.dropInterval, true, this);
+    }
+    updateDropInterval() {
+      if(this.level < Math.floor(this.clearCount / 5)) {
+        this.level = Math.floor(this.clearCount / 5);
+      }
+      this.dropInterval = (0.8 - ((this.level - 1) * 0.007)) ** (this.level - 1) * 1000;
     }
     holdAct() {
       if (this.holdReleased) return;
+      this.holdReleased = true;
+      this.dropingBlock.playerObj.hold.classList.add('disabled');
       let next;
       if (this.hold) next = this.hold;
       else next = this.popNext();
@@ -303,6 +316,7 @@ window.ft = {};
           }
         if (clear) {
           clearCount++;
+          this.clearCount++;
           for (let j = 0; j < obj.field.children[i].children.length; j++) {
             const color = obj.field.children[i].children[j].classList[0];
             if (color) {
@@ -325,12 +339,12 @@ window.ft = {};
           obj.cntHori.insertBefore(tmp, obj.cntHori.children[0]);
         }
       }
-      if(tSpin) console.log(`Tspin${['',' Single',' Double',' Triple'][clearCount]}!`)
+      if (tSpin) console.log(`Tspin${['', ' Single', ' Double', ' Triple'][clearCount]}!`)
       if (clearCount) {
         this.combo++;
-        if(!tSpin) console.log(['','Single!','Double!','Triple!','Tetris!'][clearCount]);
-        if(this.combo > 1) console.log(`${this.combo} Combo!`);
-        if(clearCount === 4 || tSpin) this.b2b++;
+        if (!tSpin) console.log(['', 'Single!', 'Double!', 'Triple!', 'Tetris!'][clearCount]);
+        if (this.combo > 1) console.log(`${this.combo} Combo!`);
+        if (clearCount === 4 || tSpin) this.b2b++;
         else this.b2b = 0;
         return { tSpin: tSpin, clearCount: clearCount };
       } else this.combo = 0;

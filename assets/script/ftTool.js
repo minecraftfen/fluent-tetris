@@ -27,9 +27,7 @@
   }
   window.ftTool.addkbdEvent = () => {
     document.onkeyup = (e) => {
-      let a = { ArrowUp: 'w', ArrowDown: 's', ArrowLeft: 'a', ArrowRight: 'd', '/': 'e' }[e.key];
-      if (!a) a = e.key;
-      p1.main.dropingBlock.move(a);
+      if(e.key in window.ft.ctrl.dict) p1.main.dropingBlock.move(window.ft.ctrl.dict[e.key]);
     };
   }
   window.ftTool.structure = () => {

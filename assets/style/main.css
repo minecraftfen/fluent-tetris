@@ -40,6 +40,16 @@ main > div::after{
   -webkit-backdrop-filter: blur(0.5vh);
   backdrop-filter: blur(0.5vh);
 }
+main > div::before{
+  opacity: 0;
+  content: "Single";
+  position: absolute;
+  width: 20%;
+  height: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .fail {
   transform: scale(.85) rotate(5deg);
   transition: transform var(--explode) 3s;
@@ -47,6 +57,9 @@ main > div::after{
 .fail::after {
   opacity: 1;
   transition: opacity 3s;
+}
+.disabled {
+  filter: grayscale(1);
 }
 /*
 @supports not(
