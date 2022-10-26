@@ -182,7 +182,7 @@ main caption {
 }
 
 .field td::before {
-  background-color: #fff2;
+  background-color: var(--empty);
   border-radius: 0.5vh;
 }
 
@@ -217,80 +217,50 @@ main table {
 }
 
 /* tetriminos */
-html.html table .i::before,
-html.html table .j::before,
-html.html table .l::before,
-html.html table .o::before,
-html.html table .s::before,
-html.html table .z::before,
-html.html table .t::before,
-html.html table .prei::before,
-html.html table .prej::before,
-html.html table .prel::before,
-html.html table .preo::before,
-html.html table .pres::before,
-html.html table .prez::before,
-html.html table .pret::before {
+html.html table .I::before,
+html.html table .J::before,
+html.html table .L::before,
+html.html table .O::before,
+html.html table .S::before,
+html.html table .Z::before,
+html.html table .T::before{
   transition: none;
 }
-html.html table .i::before {
+
+html.html table .preview::before {
+  background-color: var(--preview);
+}
+
+html.html table .I::before {
   background-color: var(--I);
 }
 
-html.html table .j::before {
+html.html table .J::before {
   background-color: var(--J);
 }
 
-html.html table .l::before {
+html.html table .L::before {
   background-color: var(--L);
 }
 
-html.html table .o::before {
+html.html table .O::before {
   background-color: var(--O);
 }
 
-html.html table .s::before {
+html.html table .S::before {
   background-color: var(--S);
 }
 
-html.html table .z::before {
+html.html table .Z::before {
   background-color: var(--Z);
 }
 
-html.html table .t::before {
+html.html table .T::before {
   background-color: var(--T);
 }
 
 html.html table .trash::before {
   background-color: var(--trash);
-}
-
-html.html table .prei::before {
-  outline: 1px solid var(--I);
-}
-
-html.html table .prej::before {
-  outline: 2px solid var(--J);
-}
-
-html.html table .prel::before {
-  outline: 1px solid var(--L);
-}
-
-html.html table .preo::before {
-  outline: 1px solid var(--O);
-}
-
-html.html table .pres::before {
-  outline: 1px solid var(--S);
-}
-
-html.html table .prez::before {
-  outline: 1px solid var(--Z);
-}
-
-html.html table .pret::before {
-  outline: 1px solid var(--T);
 }
 
 /* keyframes */

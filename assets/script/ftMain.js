@@ -83,7 +83,10 @@ window.ft = {};
         this.playerObj.main.fail();
         this.renderSelf = () => { };
       }
-      else this.renderSelf();
+      else {
+        this.preview();
+        this.renderSelf();
+      }
     }
     move(input, render = true, actDict = 'kbdAct') {
       if (Object.keys(this[actDict]).indexOf(input) === -1) return;
@@ -92,6 +95,7 @@ window.ft = {};
       if (act) {
         if (act[0] === null && this.lockResetChance <= 0) return false;
         this.renderSelf(false);
+        this.preview(false);
         out = this.moveCheck(act[0], act[1], act[2]);
         if (out) {
           this.lockTick = new Date().getTime();
@@ -115,7 +119,10 @@ window.ft = {};
       }
       this.checkFloor();
       this.tSpinCheck();
-      if (render) this.renderSelf(true);
+      if (render) {
+        this.preview(true);
+        this.renderSelf(true);
+      }
       return out;
     }
     checkFloor() {
@@ -218,13 +225,16 @@ window.ft = {};
               hit = true;
               break;
             };
+            let obj = window.ft.render.objects.locate(
+              this.player,
+              CheckX + i,
+              CheckY + j,
+              'field'
+            ).classList;
+
             if (
-              window.ft.render.objects.locate(
-                this.player,
-                CheckX + i,
-                CheckY + j,
-                'field'
-              ).classList.length !== 0
+              obj.length !== 0 &&
+              !(obj.length === 1 && obj[0] === 'preview')
             ) {
               hit = true;
               break;
@@ -247,9 +257,26 @@ window.ft = {};
       );
     }
     hardDrop() {
-      while (this.move('down', false)) { };
+      this.renderSelf(false);
+      while (!this.hitCheck(this.x++, this.y, this.rotateIndex)) { };
+      this.x -= 2;
       this.renderSelf(true);
       this.lock();
+    }
+    preview(type = true,) {
+      let x = this.x;
+      while (!this.hitCheck(x++)) { };
+      x -= 2;
+      window.ft.render.renderTable(
+        this.block,
+        this.rotateIndex,
+        this.player,
+        x,
+        this.y,
+        'field',
+        type,
+        true
+      );
     }
   };
 })();
@@ -292,6 +319,7 @@ window.ft = {};
       else next = this.popNext();
       this.hold = this.dropingBlock.block;
       this.dropingBlock.renderSelf(false);
+      this.dropingBlock.preview(false);
       window.ft.render.objects[window.ft.tools.getPlayerID(
         this.player
       )].hold.innerHTML = window.ft.render.previewHTML;

@@ -10,7 +10,7 @@
       else if (rotateIndex >= 4) rotateIndex %= 4;
       return rotateIndex;
     },
-    renderTable: (block, rotateIndex, player, x, y, area = 'field', type = true) => {
+    renderTable: (block, rotateIndex, player, x, y, area = 'field', type = true, preview = false) => {
       let subarea = undefined;
       if (area === 'x' || area === 0) area = 'cntHori';
       else if (area === 'y' || area === 1) area = 'cntVert';
@@ -19,7 +19,7 @@
         if (x + i < 0 || x + i > (area === 'cntVert' ? 19 : 20)) continue;
         for (let j = 0; j < table[i].length; j++) {
           if (y + j < 0 || y + j > (area === 'cntHori' ? 8 : 9)) continue;
-          if (table[i][j]) window.ft.render.color(block.toLowerCase(), player, x + i, y + j, area, type);
+          if (table[i][j]) window.ft.render.color(preview ? 'preview' : block, player, x + i, y + j, area, type);
         }
       }
     },
@@ -38,7 +38,7 @@
     color: (cls, player, x, y, area = 'field', type = true) => {
       let obj = window.ft.render.objects.locate(player, x, y, area).classList;
       if (type) {
-        obj.remove('i', 'j', 'l', 'o', 's', 'z', 't');
+        obj.remove('preview');
         obj.add(cls);
       }
       else obj.remove(cls);
@@ -72,7 +72,7 @@
       if (combo > 1) console.log(`${combo} Combo!`);
       if (b2b > 1) console.log(`B2B x${b2b}!`);
     },
-    effect: (type) =>{},
+    effect: (type) => { },
     objects: {
       locate: (player, x, y, area = 'field') => {
         player = window.ft.tools.getPlayerID(player);
