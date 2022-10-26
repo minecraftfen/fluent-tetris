@@ -66,9 +66,13 @@
       window.ft.render.objects.p1.hold.innerHTML = window.ft.render.objects.p2.hold.innerHTML = window.ft.render.previewHTML;
     },
     levelUp: (player) => { },
-    clearType: (player,tspin,clearCount,combo) => {
-
+    clearType: (player, tSpin, clearCount, combo, b2b) => {
+      // Display
+      if (tSpin || clearCount) console.log(`${player} got a ${tSpin ? 'Tspin' : ''}${['', 'Single', 'Double', 'Triple', 'Tetris'][clearCount]}!`);
+      if (combo > 1) console.log(`${combo} Combo!`);
+      if (b2b > 1) console.log(`B2B x${b2b}!`);
     },
+    effect: (type) =>{},
     objects: {
       locate: (player, x, y, area = 'field') => {
         player = window.ft.tools.getPlayerID(player);

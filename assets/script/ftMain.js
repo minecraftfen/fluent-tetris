@@ -79,8 +79,11 @@ window.ft = {};
         // '180': () => [null, null, this.rotateIndex + 2],
       }
       */
-      if (this.hitCheck()) this.playerObj.main.fail();
-      this.renderSelf();
+      if (this.hitCheck()) {
+        this.playerObj.main.fail();
+        this.renderSelf = () => { };
+      }
+      else this.renderSelf();
     }
     move(input, render = true, actDict = 'kbdAct') {
       if (Object.keys(this[actDict]).indexOf(input) === -1) return;
@@ -111,6 +114,7 @@ window.ft = {};
         if (act === null) return;
       }
       this.checkFloor();
+      this.tSpinCheck();
       if (render) this.renderSelf(true);
       return out;
     }
@@ -120,7 +124,7 @@ window.ft = {};
         this.locked = false;
         this.lockCheckID = window.ftmgr.register(
           (_t, v) => { v.checkLock() },
-          0, this.dropInterval, true, this
+          this.dropInterval, true, this
         );
       }
       else if (this.locked !== null) {
@@ -133,7 +137,17 @@ window.ft = {};
     }
     lock() {
       this.playerObj.hold.classList.remove('disabled');
-      console.log(this.playerObj.main.checkClear(this.tSpinCheck()));
+      let tSpin = this.tSpinCheck(), clearCount = this.playerObj.main.checkClear();
+      if (clearCount)
+        if (clearCount === 4 || tSpin) this.playerObj.b2b++;
+        else this.playerObj.b2b = 0;
+      window.ft.render.clearType(
+        this.player,
+        tSpin,
+        clearCount,
+        this.playerObj.combo,
+        this.playerObj.b2b
+      );
       this.playerObj.main.dropingBlock = new window.ft.block(this.playerObj.main.popNext(), this.player);
       window.ftmgr.unregister(this.lockCheckID);
       this.playerObj.main.holdReleased = false;
@@ -182,6 +196,7 @@ window.ft = {};
           this.y + checkList[i][1]
         ).classList.length > 0) cnt++;
       }
+      if (cnt >= 3) window.ft.render.effect('tSpin');
       return cnt >= 3;
     }
     hitCheck(newX = null, newY = null, newRotateIndex = null) {
@@ -247,7 +262,7 @@ window.ft = {};
       this.next = window.ft.tools.shuffle();
       this.dropingBlock = new window.ft.block(this.popNext(), this.player);
       this.field = [];
-      this.dropInterval = 500 // in ms
+      this.dropInterval = 1000 // in ms
       this.hold = null;
       this.holdReleased = false;
       this.combo = 0;
@@ -259,13 +274,14 @@ window.ft = {};
       let temp = [];
       for (var i = 0; i < 10; i++) temp.push([]);
       for (var i = 0; i < 20; i++) this.field.push(temp);
-      this.dropID = window.ftmgr.register((t, v) => { v.dropingBlock.move('down'); }, 0, this.dropInterval, true, this);
+      this.dropID = window.ftmgr.register((_t, v) => { v.dropingBlock.move('down'); }, this.dropInterval, true, this);
     }
     updateDropInterval() {
-      if(this.level < Math.floor(this.clearCount / 5)) {
+      if (this.level < Math.floor(this.clearCount / 5)) {
         this.level = Math.floor(this.clearCount / 5);
       }
       this.dropInterval = (0.8 - ((this.level - 1) * 0.007)) ** (this.level - 1) * 1000;
+      window.ftmgr.workload[this.dropID].repeat = this.dropInterval;
     }
     holdAct() {
       if (this.holdReleased) return;
@@ -298,13 +314,12 @@ window.ft = {};
     }
     fail() {
       window.ftmgr.unregister(this.dropID);
-
       // TODO: WTF is this? That can't be a proper solution
       this.dropingBlock.playerObj.classList.add('fail');
 
-      delete this;
+      this.popNext = this.holdAct = () => { };
     };
-    checkClear(tSpin) {
+    checkClear() {
       let obj = window.ft.render.objects[window.ft.tools.getPlayerID(this.player)];
       let clearCount = 0;
       for (let i = 0; i < obj.field.children.length; i++) {
@@ -339,15 +354,11 @@ window.ft = {};
           obj.cntHori.insertBefore(tmp, obj.cntHori.children[0]);
         }
       }
-      if (tSpin) console.log(`Tspin${['', ' Single', ' Double', ' Triple'][clearCount]}!`)
       if (clearCount) {
         this.combo++;
-        if (!tSpin) console.log(['', 'Single!', 'Double!', 'Triple!', 'Tetris!'][clearCount]);
-        if (this.combo > 1) console.log(`${this.combo} Combo!`);
-        if (clearCount === 4 || tSpin) this.b2b++;
-        else this.b2b = 0;
-        return { tSpin: tSpin, clearCount: clearCount };
+        this.updateDropInterval();
       } else this.combo = 0;
+      return clearCount;
     }
     addTrash(lines = 1) {
       let tmp1 = window.ft.render.emptyTr.cloneNode(true), tmp2 = window.ft.render.emptyTr.cloneNode(true), emptyNum = parseInt(Math.random() * 10);
@@ -385,4 +396,9 @@ window.ft = {};
     if (Object.prototype.toString.call(id) === '[object Number]') id = `p${id}`;
     return id;
   }
+})();
+
+// Watch
+(() => {
+  window.onblur = () => { };
 })();
