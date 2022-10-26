@@ -3,15 +3,15 @@
   window.ftmgr = {};
   window.ftmgr.workload = [];
   window.ftmgr.started = false;
-  window.ftmgr.register = (handler, timestamp, repeat = null, async = true, handlerVars = {}) => {
+  window.ftmgr.register = (handler, repeat = null, async = true, handlerVars = {}) => {
     if (typeof handler !== 'function') throw new TypeError('"Handler" must be a function');
-    if (typeof timestamp !== 'number') throw new TypeError('"Timestamp" must be a number');
+
     if (repeat !== null && typeof repeat !== 'number') throw new TypeError('"Repeat" must be a number');
     window.ftmgr.started = true;
     window.requestAnimationFrame(window.ftmgr.frameHandler);
     return window.ftmgr.workload.push({
       handler: handler,
-      timestamp: timestamp,
+      timestamp: false,
       repeat: repeat,
       async: async,
       handlerVars: handlerVars,
@@ -41,8 +41,8 @@
       }
     window.ftmgr.started = valid;
     } catch (e) {
-      if(!(e instanceof TypeError && e.message.search(/^Cannot read properties of undefined \(reading/) === 0)) throw e;
-    }finally{
+      if (!(e instanceof TypeError && e.message.search(/^Cannot read properties of undefined \(reading/) === 0)) throw e;
+    } finally {
       window.requestAnimationFrame(window.ftmgr.frameHandler);
     }
   };
