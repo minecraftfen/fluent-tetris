@@ -1,0 +1,16 @@
+#touch{
+  width: 0;
+  height: 0;
+  overflow: visible;
+  position: fixed;
+  z-index: 10;
+  display: none;
+}
+#touch img{
+  position: fixed;
+  height: 15vh;
+}
+.cover.start::after{
+  content: "或触摸以启用触控操作";
+  font-size: 2vw;
+}

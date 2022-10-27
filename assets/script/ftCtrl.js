@@ -43,7 +43,7 @@
           window.ft.ctrl.keyList[key] === true ||
           typeof window.ft.ctrl.keyList[key] === 'number'
         ) return;
-        p1.main.dropingBlock.move(key);
+        if(p1.main.dropingBlock) p1.main.dropingBlock.move(key);
         if (window.ft.ctrl.repeat[key] && window.ft.ctrl.repeat[key].repeat)
           window.ft.ctrl.keyList[key] = true;
       },
@@ -58,12 +58,10 @@
         for (key in obj) {
           if (obj[key] === false) return;
           if (obj[key] === true) {
-            console.log("First",key,t);
             obj[key] = t + window.ft.ctrl.repeat[key].delay();
             return;
           }
           if (obj[key] < t) {
-            console.log("repeat",key,t);
             obj[key] = t + window.ft.ctrl.repeat[key].interval();
             p1.main.dropingBlock.move(key);
           }

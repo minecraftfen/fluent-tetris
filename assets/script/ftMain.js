@@ -287,7 +287,7 @@ window.ft = {};
     constructor(player) {
       this.player = player;
       this.next = window.ft.tools.shuffle();
-      this.dropingBlock = new window.ft.block(this.popNext(), this.player);
+      this.dropingBlock = null;
       this.field = [];
       this.dropInterval = 1000 // in ms
       this.hold = null;
@@ -301,6 +301,12 @@ window.ft = {};
       let temp = [];
       for (var i = 0; i < 10; i++) temp.push([]);
       for (var i = 0; i < 20; i++) this.field.push(temp);
+      this.dropID = null;
+    }
+    start(bool = true){
+
+      if(bool && this.dropingBlock === null && this.dropID === null) this.dropingBlock = new window.ft.block(this.popNext(), this.player)
+      else console.trace();
       this.dropID = window.ftmgr.register((_t, v) => { v.dropingBlock.move('down'); }, this.dropInterval, true, this);
     }
     updateDropInterval() {

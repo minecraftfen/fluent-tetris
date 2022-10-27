@@ -27,7 +27,7 @@ main {
 }
 main > div::after{
   opacity: 0;
-  content: "Failed";
+  content: "顶出";
   background-color: #e74c3c40;
   position: absolute;
   width: 100%;
@@ -60,6 +60,35 @@ main > div::before{
 }
 .disabled {
   filter: grayscale(1);
+}
+#bglogo{
+  position: absolute;
+  z-index: -1;
+  height: 60vh;
+}
+.cover{
+  position: fixed;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: calc(100vw - 10vh);
+  height: 90vh;
+  padding: 5vh;
+  background-color: #0008;
+  font-size: 5vw;
+  transition: opacity 0.5s;
+}
+.cover.blur{
+  background-color: #e74c3c40;
+}
+.cover.blur::after{
+  content: "无法响应键盘操作，单击窗口以恢复";
+  font-size: 2vw;
+}
+
+.cover.hide{
+  opacity: 0;
 }
 /*
 @supports not(
@@ -113,11 +142,11 @@ main caption {
 }
 
 .status .next::before {
-  content: "Next";
+  content: "预览";
 }
 
 .status .hold::before {
-  content: "Hold";
+  content: "暂存";
 }
 
 /* field */

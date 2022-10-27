@@ -12,13 +12,14 @@
     <title>Fluent Tetris</title>
     <link rel="stylesheet" href="./assets/style/var.css" />
     <link rel="stylesheet" href="./assets/style/main.css" />
+    <!--<link rel="stylesheet" href="./assets/style/touch.css" />-->
   </head>
   <body>
     <main>
       <div id="p1">
         <table class="main">
           <caption>
-            Player1
+            玩家1
           </caption>
           <tbody class="field" id="p1f"></tbody>
           <tbody class="connect cntHori" id="p1ch"></tbody>
@@ -32,7 +33,7 @@
       <div id="p2" style="display: none;">
         <table class="main">
           <caption>
-            Player2
+            玩家2
           </caption>
           <tbody class="field" id="p2f"></tbody>
           <tbody class="connect cntHori" id="p2ch"></tbody>
@@ -43,14 +44,21 @@
           <div class="next" id="p2n"></div>
         </div>
       </div>
+      <!--<img id="bglogo" src="./assets/image/Tetris_2019_stroke.svg" alt="Tetris Logo">-->
     </main>
-    <div id="cover">按任意键以开始</div>
+    <div class="cover start" id="startCover">按任意键以开始</div>
+    <div class="cover blur hide" id="blurCover">失去焦点</div>
+    <!--<div id="touch">
+      <img id="t-hd" src="./assets/image/hardDrop.svg" alt="">
+      <img id="t-sd" src="./assets/image/softDrop.svg" alt="">
+    </div>-->
     <!-- Libraries -->
     <script src="./assets/script/ftMain.js"></script>
     <script src="./assets/script/ftMgr.js"></script>
     <script src="./assets/script/ftRender.js"></script>
     <script src="./assets/script/ftVar.js"></script>
     <script src="./assets/script/ftCtrl.js"></script>
+    <!--<script src="./assets/script/ftTouch.js"></script>-->
     <!-- Instances -->
     <script>
       ft.render.initobj();
@@ -58,10 +66,14 @@
       // document.getElementById('p2').main = new ft.main(2);
       ft.ctrl.bind();
       ft.copyright();
-
+      window.onblur=()=>{document.getElementById('blurCover').classList.remove('hide');};
+      window.onfocus=()=>{document.getElementById('blurCover').classList.add('hide');};
+      window.onkeydown = window.onclick = (e) => {
+        console.log(e);
+        document.getElementById('startCover').classList.add('hide');
+        p1.main.start();
+        window.onkeydown = window.onclick = () => {};
+      };
     </script>
-    <!-- Debug -/->
-    <script src="./assets/script/ftTool.js"></script>
-    <!---->
   </body>
 </html>
